@@ -1,98 +1,156 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useRouter } from 'expo-router';
+import React from 'react';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FAB } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { HelloWave } from '@/components/hello-wave';
-import ParallaxScrollView from '@/components/parallax-scroll-view';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Link } from 'expo-router';
+import { StatCard } from '../../src/components/molecules/StatCard';
+import { ExpenseList } from '../../src/components/organisms/ExpenseList';
+import { useAppDispatch, useAppSelector } from '../../src/hooks/useRedux';
+import { useThemeColors } from '../../src/hooks/useThemeColors';
+import { deleteExpense } from '../../src/store/slices/expenseSlice';
+import { spacing, typography } from '../../src/theme/theme';
+import { Expense } from '../../src/types';
+import {
+    calculateTotalSpent,
+    getExpensesByPeriod,
+    sortExpensesByDate
+} from '../../src/utils/calculations';
+import { formatCurrency, formatDate } from '../../src/utils/formatters';
 
 export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const expenses = useAppSelector((state) => state.expenses.expenses);
+  const currency = useAppSelector((state) => state.settings.currency);
+  const colors = useThemeColors();
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+  const todayExpenses = getExpensesByPeriod(expenses, 'day');
+  const weekExpenses = getExpensesByPeriod(expenses, 'week');
+  const monthExpenses = getExpensesByPeriod(expenses, 'month');
+
+  const todayTotal = calculateTotalSpent(todayExpenses);
+  const weekTotal = calculateTotalSpent(weekExpenses);
+  const monthTotal = calculateTotalSpent(monthExpenses);
+
+  const handleAddExpense = () => {
+    router.push('/modal');
+  };
+
+  const handleDeleteExpense = (expense: Expense) => {
+    Alert.alert(
+      'Delete Expense',
+      'Are you sure you want to delete this expense?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => dispatch(deleteExpense(expense.id)),
+        },
+      ]
+    );
+  };
+
+  return (
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top']}>
+      <ExpenseList
+        expenses={sortExpensesByDate(expenses).slice(0, 20)}
+        onExpenseDelete={handleDeleteExpense}
+        ListHeaderComponent={
+          <>
+            {/* Header */}
+            <View style={styles.header}>
+              <View>
+                <Text style={[styles.greeting, { color: colors.text }]}>Welcome back!</Text>
+                <Text style={[styles.date, { color: colors.textLight }]}>{ formatDate(new Date())}</Text>
+              </View>
+            </View>
+
+            {/* Stats Cards */}
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.statsContainer}
+            >
+              <StatCard
+                title="Today"
+                value={formatCurrency(todayTotal, currency)}
+                icon="today"
+                iconColor={colors.primary}
+              />
+              <StatCard
+                title="This Week"
+                value={formatCurrency(weekTotal, currency)}
+                icon="calendar"
+                iconColor={colors.secondary}
+              />
+              <StatCard
+                title="This Month"
+                value={formatCurrency(monthTotal, currency)}
+                icon="trending-up"
+                iconColor={colors.success}
+              />
+            </ScrollView>
+
+            {/* Recent Expenses Title */}
+            <View style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: colors.text }]}>Recent Expenses</Text>
+            </View>
+          </>
+        }
+      />
+
+      {/* Floating Action Button */}
+      <FAB
+        icon="plus"
+        style={[styles.fab, { backgroundColor: colors.primary }]}
+        onPress={handleAddExpense}
+        color="#FFFFFF"
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  container: {
+    flex: 1,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  header: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: 8,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.lg,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  greeting: {
+    fontSize: typography.fontSize.xxl,
+    fontWeight: typography.fontWeight.bold,
+    marginBottom: spacing.xs,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+  date: {
+    fontSize: typography.fontSize.md,
+  },
+  statsContainer: {
+    paddingLeft: spacing.md,
+    paddingRight: spacing.sm,
+  },
+  section: {
+    marginTop: spacing.lg,
+  },
+  sectionTitle: {
+    fontSize: typography.fontSize.xl,
+    fontWeight: typography.fontWeight.bold,
+    paddingHorizontal: spacing.md,
+    marginBottom: spacing.md,
+  },
+  fab: {
     position: 'absolute',
+    right: spacing.md,
+    bottom: spacing.md,
   },
 });
+
