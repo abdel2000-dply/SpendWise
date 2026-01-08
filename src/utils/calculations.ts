@@ -17,16 +17,13 @@ import { Category, CategorySpending, Expense, TimeFilter } from "../types";
 export const mapBudgetPeriodToTimeFilter = (
   period: "daily" | "weekly" | "monthly" | "yearly"
 ): TimeFilter => {
-  switch (period) {
-    case "daily":
-      return "day";
-    case "weekly":
-      return "week";
-    case "monthly":
-      return "month";
-    case "yearly":
-      return "year";
-  }
+  const periodMap = {
+    daily: 'day',
+    weekly: 'week',
+    monthly: 'month',
+    yearly: 'year',
+  } as const;
+  return periodMap[period];
 };
 
 export const calculateTotalSpent = (expenses: Expense[]): number => {

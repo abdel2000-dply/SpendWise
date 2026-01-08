@@ -28,17 +28,18 @@ export const AmountInput: React.FC<AmountInputProps> = ({
 
   const handleChangeText = (text: string) => {
     // Allow only numbers and decimal point
-    const cleaned = text.replace(/[^0-9.]/g, '');
+    let cleaned = text.replace(/[^0-9.]/g, '');
     
-    // Prevent multiple decimal points - keep only the first one
-    const parts = cleaned.split('.');
-    let validAmount = parts[0];
-    if (parts.length > 1) {
-      // Keep first decimal and its digits (max 2)
-      validAmount = parts[0] + '.' + parts[1].substring(0, 2);
+    // Handle multiple decimal points - keep only the first one
+    const firstDecimalIndex = cleaned.indexOf('.');
+    if (firstDecimalIndex !== -1) {
+      // Keep everything before first decimal, the decimal itself, and up to 2 digits after
+      const beforeDecimal = cleaned.substring(0, firstDecimalIndex);
+      const afterDecimal = cleaned.substring(firstDecimalIndex + 1).replace(/\./g, ''); // Remove any additional decimals
+      cleaned = beforeDecimal + '.' + afterDecimal.substring(0, 2);
     }
     
-    onChangeText(validAmount);
+    onChangeText(cleaned);
   };
 
   return (
