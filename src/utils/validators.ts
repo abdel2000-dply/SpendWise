@@ -64,10 +64,13 @@ export const validateExpenseForm = (
   if (!validateAmount(data.amount)) {
     if (!data.amount || data.amount.trim() === '') {
       errors.amount = 'Amount is required';
-    } else if (parseFloat(data.amount) <= 0) {
-      errors.amount = 'Amount must be greater than 0';
     } else {
-      errors.amount = 'Please enter a valid amount';
+      const numericAmount = parseFloat(data.amount);
+      if (isNaN(numericAmount)) {
+        errors.amount = 'Please enter a valid amount';
+      } else if (numericAmount <= 0) {
+        errors.amount = 'Amount must be greater than 0';
+      }
     }
   }
 

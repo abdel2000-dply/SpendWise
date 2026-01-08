@@ -11,6 +11,24 @@ import {
 } from "date-fns";
 import { Category, CategorySpending, Expense, TimeFilter } from "../types";
 
+/**
+ * Map budget period to time filter
+ */
+export const mapBudgetPeriodToTimeFilter = (
+  period: "daily" | "weekly" | "monthly" | "yearly"
+): TimeFilter => {
+  switch (period) {
+    case "daily":
+      return "day";
+    case "weekly":
+      return "week";
+    case "monthly":
+      return "month";
+    case "yearly":
+      return "year";
+  }
+};
+
 export const calculateTotalSpent = (expenses: Expense[]): number => {
   return expenses.reduce((total, expense) => total + expense.amount, 0);
 };

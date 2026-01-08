@@ -5,7 +5,11 @@ import {
   updateBudget,
 } from '../store/slices/budgetSlice';
 import { Budget } from '../types';
-import { calculateTotalSpent, getExpensesByPeriod } from '../utils/calculations';
+import { 
+  calculateTotalSpent, 
+  getExpensesByPeriod,
+  mapBudgetPeriodToTimeFilter 
+} from '../utils/calculations';
 import { useAppDispatch, useAppSelector } from './useRedux';
 
 /**
@@ -76,9 +80,7 @@ export const useBudget = () => {
       // Filter by budget period
       const periodExpenses = getExpensesByPeriod(
         filteredExpenses,
-        budget.period === 'daily' ? 'day' :
-        budget.period === 'weekly' ? 'week' :
-        budget.period === 'monthly' ? 'month' : 'year'
+        mapBudgetPeriodToTimeFilter(budget.period)
       );
 
       const spent = calculateTotalSpent(periodExpenses);
