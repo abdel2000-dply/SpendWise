@@ -37,7 +37,7 @@ export const Typography: React.FC<TypographyProps> = ({
   );
 };
 
-const getVariantStyle = (variant: TypographyProps['variant']): TextStyle => {
+const getVariantStyle = (variant: TypographyProps['variant'] = 'body'): TextStyle => {
   switch (variant) {
     case 'heading':
       return styles.heading;
@@ -54,7 +54,7 @@ const getVariantStyle = (variant: TypographyProps['variant']): TextStyle => {
   }
 };
 
-const getWeightStyle = (weight: TypographyProps['weight']): TextStyle => {
+const getWeightStyle = (weight: TypographyProps['weight'] = 'regular'): TextStyle => {
   return {
     fontWeight: typography.fontWeight[weight],
   };
