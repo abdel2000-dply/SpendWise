@@ -9,7 +9,7 @@ import {
   startOfWeek,
   startOfYear,
 } from "date-fns";
-import { Category, CategorySpending, Expense } from "../types";
+import { Category, CategorySpending, Expense, TimeFilter } from "../types";
 
 export const calculateTotalSpent = (expenses: Expense[]): number => {
   return expenses.reduce((total, expense) => total + expense.amount, 0);
@@ -130,4 +130,18 @@ export const sortExpensesByDate = (
     const dateB = new Date(b.date).getTime();
     return ascending ? dateA - dateB : dateB - dateA;
   });
+};
+
+/**
+ * Calculate total spent for a specific time period
+ */
+export const calculateTotalByPeriod = (
+  expenses: Expense[],
+  period: TimeFilter
+): number => {
+  if (period === 'custom') {
+    return calculateTotalSpent(expenses);
+  }
+  const filtered = getExpensesByPeriod(expenses, period);
+  return calculateTotalSpent(filtered);
 };
