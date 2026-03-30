@@ -254,7 +254,7 @@ export default function BudgetScreen() {
         {tab === 'savings' && (
           <>
             {/* Savings tips card */}
-            <View style={[styles.tipsCard, { backgroundColor: colors.primary + '15', borderColor: colors.primary + '40' }]}>
+            <View style={[styles.tipsCard, { backgroundColor: 'rgba(108,99,255,0.08)', borderColor: 'rgba(108,99,255,0.25)' }]}>
               <Text style={[styles.tipsTitle, { color: colors.primary }]}>💡 Saving Tips</Text>
               <Text style={[styles.tipsText, { color: colors.text }]}>
                 • Try the 50/30/20 rule: 50% needs, 30% wants, 20% savings{'\n'}

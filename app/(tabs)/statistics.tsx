@@ -140,7 +140,7 @@ export default function StatisticsScreen() {
                       {
                         backgroundColor: item.category.color,
                         width: `${Math.min(item.percentage, 100)}%`,
-                        opacity: index === 0 ? 1 : 0.75 + (0.25 * (categoryBreakdown.length - index) / categoryBreakdown.length),
+                        opacity: 0.75 + 0.25 * (1 - index / Math.max(categoryBreakdown.length, 1)),
                       },
                     ]}
                   />
