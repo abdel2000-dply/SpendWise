@@ -66,3 +66,16 @@ export interface DateRange {
 }
 
 export type TimeFilter = "day" | "week" | "month" | "year" | "custom";
+
+export interface SavingsGoal {
+  id: string;
+  name: string;
+  targetAmount: number;
+  currentAmount: number;
+  currency: string;
+  icon: string;
+  color: string;
+  deadline?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
