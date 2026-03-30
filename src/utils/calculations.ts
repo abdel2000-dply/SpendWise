@@ -9,7 +9,7 @@ import {
   startOfWeek,
   startOfYear,
 } from "date-fns";
-import { Category, CategorySpending, Expense } from "../types";
+import { Budget, Category, CategorySpending, Expense } from "../types";
 
 export const calculateTotalSpent = (expenses: Expense[]): number => {
   return expenses.reduce((total, expense) => total + expense.amount, 0);
@@ -131,3 +131,27 @@ export const sortExpensesByDate = (
     return ascending ? dateA - dateB : dateB - dateA;
   });
 };
+
+/** Returns spent amount for a given budget in the current period. */
+export const getBudgetSpent = (
+  budget: Budget,
+  expenses: Expense[]
+): number => {
+  const periodExpenses = getExpensesByPeriod(expenses, budget.period);
+  if (budget.categoryId) {
+    return calculateTotalSpent(
+      periodExpenses.filter((e) => e.category.id === budget.categoryId)
+    );
+  }
+  return calculateTotalSpent(periodExpenses);
+};
+
+/** Returns the percentage of budget used (0–100+). */
+export const getBudgetUsagePercent = (
+  budget: Budget,
+  expenses: Expense[]
+): number => {
+  if (budget.amount <= 0) return 0;
+  return (getBudgetSpent(budget, expenses) / budget.amount) * 100;
+};
+
