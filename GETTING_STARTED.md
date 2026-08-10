@@ -45,6 +45,16 @@ You'll see a QR code in your terminal.
 
 **That's it!** The app should now be running on your device. 🎊
 
+## 🔁 I already had it on my phone — run it again (commands only)
+
+```bash
+# from the project folder
+npm install
+npm start -- --tunnel
+```
+
+Then open **Expo Go** on your phone and scan the new QR code.
+
 ## 🖥️ Alternative: Run on Emulator/Simulator
 
 ### Android Emulator
