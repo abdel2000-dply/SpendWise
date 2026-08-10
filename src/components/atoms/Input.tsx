@@ -1,6 +1,10 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import { TextInput as PaperTextInput, TextInputProps as PaperTextInputProps } from 'react-native-paper';
+import React from "react";
+import { StyleSheet } from "react-native";
+import {
+    TextInput as PaperTextInput,
+    TextInputProps as PaperTextInputProps,
+} from "react-native-paper";
+import { useThemeColors } from "../../hooks/useThemeColors";
 
 interface TextInputProps extends PaperTextInputProps {
   fullWidth?: boolean;
@@ -8,19 +12,17 @@ interface TextInputProps extends PaperTextInputProps {
 
 export const TextInput: React.FC<TextInputProps> = ({
   fullWidth = true,
-  mode = 'outlined',
+  mode = "outlined",
   style,
   ...props
 }) => {
+  const colors = useThemeColors();
+
   return (
     <PaperTextInput
       mode={mode}
-      style={[
-        styles.input,
-        fullWidth && styles.fullWidth,
-        style,
-      ]}
-      textColor="#2E3A59"
+      style={[styles.input, fullWidth && styles.fullWidth, style]}
+      textColor={colors.text}
       {...props}
     />
   );
@@ -31,6 +33,6 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   fullWidth: {
-    width: '100%',
+    width: "100%",
   },
 });

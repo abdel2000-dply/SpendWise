@@ -1,10 +1,10 @@
-import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import { Colors } from '../../constants/colors';
-import { spacing, typography } from '../../theme/theme';
-import { Card } from '../atoms/Card';
-import { Icon } from '../atoms/Icon';
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import { useThemeColors } from "../../hooks/useThemeColors";
+import { spacing, typography } from "../../theme/theme";
+import { Card } from "../atoms/Card";
+import { Icon } from "../atoms/Icon";
 
 interface StatCardProps {
   title: string;
@@ -18,19 +18,33 @@ export const StatCard: React.FC<StatCardProps> = ({
   title,
   value,
   icon,
-  iconColor = Colors.primary,
+  iconColor,
   subtitle,
 }) => {
+  const colors = useThemeColors();
+  const resolvedIconColor = iconColor || colors.primary;
+
   return (
     <Card style={styles.card} shadowSize="medium">
       <View style={styles.container}>
-        <View style={[styles.iconContainer, { backgroundColor: iconColor + '20' }]}>
-          <Icon name={icon} size={24} color={iconColor} />
+        <View
+          style={[
+            styles.iconContainer,
+            { backgroundColor: resolvedIconColor + "20" },
+          ]}
+        >
+          <Icon name={icon} size={24} color={resolvedIconColor} />
         </View>
         <View style={styles.content}>
-          <Text style={styles.title}>{title}</Text>
-          <Text style={styles.value}>{value}</Text>
-          {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+          <Text style={[styles.title, { color: colors.textLight }]}>
+            {title}
+          </Text>
+          <Text style={[styles.value, { color: colors.text }]}>{value}</Text>
+          {subtitle && (
+            <Text style={[styles.subtitle, { color: colors.textLight }]}>
+              {subtitle}
+            </Text>
+          )}
         </View>
       </View>
     </Card>
@@ -50,8 +64,8 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: spacing.sm,
   },
   content: {
@@ -59,17 +73,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: typography.fontSize.sm,
-    color: Colors.textLight,
     marginBottom: spacing.xs,
   },
   value: {
     fontSize: typography.fontSize.xl,
     fontWeight: typography.fontWeight.bold,
-    color: Colors.text,
     marginBottom: spacing.xs,
   },
   subtitle: {
     fontSize: typography.fontSize.xs,
-    color: Colors.textLight,
   },
 });

@@ -19,7 +19,7 @@ export const DEFAULT_CATEGORIES: Category[] = [
   {
     id: "shopping",
     name: "Shopping",
-    icon: "shopping-bag",
+    icon: "bag",
     color: Colors.categories.shopping,
     isDefault: true,
   },
@@ -101,5 +101,8 @@ export const CURRENCY_SYMBOLS: Record<string, string> = {
   CHF: "CHF",
   NZD: "NZ$",
 };
+
+// Currencies whose symbol goes AFTER the amount (e.g. "100 DH" instead of "DH100")
+export const CURRENCY_SYMBOL_RIGHT = new Set(["MAD", "CHF"]);
 
 export const DEFAULT_CURRENCY = "MAD";

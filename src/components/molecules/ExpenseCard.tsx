@@ -1,23 +1,27 @@
-import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { Colors } from '../../constants/colors';
-import { spacing, typography } from '../../theme/theme';
-import { Expense } from '../../types';
-import { formatCurrency, formatTime } from '../../utils/formatters';
-import { Card } from '../atoms/Card';
-import { Icon } from '../atoms/Icon';
+import React from "react";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useThemeColors } from "../../hooks/useThemeColors";
+import { spacing, typography } from "../../theme/theme";
+import { Expense } from "../../types";
+import { formatCurrency, formatTime } from "../../utils/formatters";
+import { Card } from "../atoms/Card";
+import { Icon } from "../atoms/Icon";
 
 interface ExpenseCardProps {
   expense: Expense;
   onPress?: () => void;
+  onEdit?: () => void;
   onDelete?: () => void;
 }
 
 export const ExpenseCard: React.FC<ExpenseCardProps> = ({
   expense,
   onPress,
+  onEdit,
   onDelete,
 }) => {
+  const colors = useThemeColors();
+
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
       <Card style={styles.card}>
@@ -25,7 +29,7 @@ export const ExpenseCard: React.FC<ExpenseCardProps> = ({
           <View
             style={[
               styles.iconContainer,
-              { backgroundColor: expense.category.color + '20' },
+              { backgroundColor: expense.category.color + "20" },
             ]}
           >
             <Icon
@@ -36,30 +40,54 @@ export const ExpenseCard: React.FC<ExpenseCardProps> = ({
           </View>
 
           <View style={styles.content}>
-            <Text style={styles.categoryName}>{expense.category.name}</Text>
+            <Text style={[styles.categoryName, { color: colors.text }]}>
+              {expense.category.name}
+            </Text>
             {expense.note && (
-              <Text style={styles.note} numberOfLines={1}>
+              <Text
+                style={[styles.note, { color: colors.textLight }]}
+                numberOfLines={1}
+              >
                 {expense.note}
               </Text>
             )}
-            <Text style={styles.time}>{formatTime(new Date(expense.date))}</Text>
+            <Text style={[styles.time, { color: colors.textLight }]}>
+              {formatTime(new Date(expense.date))}
+            </Text>
           </View>
 
           <View style={styles.rightSection}>
-            <Text style={styles.amount}>
+            <Text style={[styles.amount, { color: colors.text }]}>
               {formatCurrency(expense.amount, expense.currency)}
             </Text>
-            {onDelete && (
-              <TouchableOpacity
-                onPress={(e) => {
-                  e.stopPropagation();
-                  onDelete();
-                }}
-                style={styles.deleteButton}
-              >
-                <Icon name="trash-outline" size={18} color={Colors.error} />
-              </TouchableOpacity>
-            )}
+            <View style={styles.actions}>
+              {onEdit && (
+                <TouchableOpacity
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    onEdit();
+                  }}
+                  style={styles.actionButton}
+                >
+                  <Icon
+                    name="pencil-outline"
+                    size={18}
+                    color={colors.primary}
+                  />
+                </TouchableOpacity>
+              )}
+              {onDelete && (
+                <TouchableOpacity
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    onDelete();
+                  }}
+                  style={styles.actionButton}
+                >
+                  <Icon name="trash-outline" size={18} color={colors.error} />
+                </TouchableOpacity>
+              )}
+            </View>
           </View>
         </View>
       </Card>
@@ -72,16 +100,16 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: spacing.md,
   },
   iconContainer: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginRight: spacing.md,
   },
   content: {
@@ -90,28 +118,28 @@ const styles = StyleSheet.create({
   categoryName: {
     fontSize: typography.fontSize.md,
     fontWeight: typography.fontWeight.semibold,
-    color: Colors.text,
     marginBottom: 2,
   },
   note: {
     fontSize: typography.fontSize.sm,
-    color: Colors.textLight,
     marginBottom: 2,
   },
   time: {
     fontSize: typography.fontSize.xs,
-    color: Colors.textLight,
   },
   rightSection: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   amount: {
     fontSize: typography.fontSize.lg,
     fontWeight: typography.fontWeight.bold,
-    color: Colors.text,
     marginBottom: spacing.xs,
   },
-  deleteButton: {
+  actions: {
+    flexDirection: "row",
+    gap: spacing.xs,
+  },
+  actionButton: {
     padding: spacing.xs,
   },
 });

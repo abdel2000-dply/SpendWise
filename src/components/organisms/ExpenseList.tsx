@@ -10,6 +10,7 @@ import { ExpenseCard } from '../molecules/ExpenseCard';
 interface ExpenseListProps {
   expenses: Expense[];
   onExpensePress?: (expense: Expense) => void;
+  onExpenseEdit?: (expense: Expense) => void;
   onExpenseDelete?: (expense: Expense) => void;
   ListHeaderComponent?: React.ReactElement | null;
 }
@@ -17,6 +18,7 @@ interface ExpenseListProps {
 export const ExpenseList: React.FC<ExpenseListProps> = ({
   expenses,
   onExpensePress,
+  onExpenseEdit,
   onExpenseDelete,
   ListHeaderComponent,
 }) => {
@@ -51,6 +53,7 @@ export const ExpenseList: React.FC<ExpenseListProps> = ({
               key={expense.id}
               expense={expense}
               onPress={() => onExpensePress?.(expense)}
+              onEdit={() => onExpenseEdit?.(expense)}
               onDelete={() => onExpenseDelete?.(expense)}
             />
           ))}

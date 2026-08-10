@@ -1,11 +1,17 @@
-import { CURRENCY_SYMBOLS } from "../constants/categories";
+import {
+  CURRENCY_SYMBOLS,
+  CURRENCY_SYMBOL_RIGHT,
+} from "../constants/categories";
 
 export const formatCurrency = (
   amount: number,
-  currency: string = "USD"
+  currency: string = "USD",
 ): string => {
   const symbol = CURRENCY_SYMBOLS[currency] || "$";
-  return `${symbol}${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+  const formatted = amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return CURRENCY_SYMBOL_RIGHT.has(currency)
+    ? `${formatted} ${symbol}`
+    : `${symbol}${formatted}`;
 };
 
 export const formatDate = (date: Date): string => {
@@ -47,4 +53,31 @@ export const formatTime = (date: Date): string => {
 export const truncateText = (text: string, maxLength: number): string => {
   if (text.length <= maxLength) return text;
   return text.substring(0, maxLength) + "...";
+};
+
+export const formatPercentage = (value: number): string => {
+  return `${value.toFixed(1)}%`;
+};
+
+export const formatCompactNumber = (value: number): string => {
+  if (value >= 1000000) {
+    return `${(value / 1000000).toFixed(1)}M`;
+  }
+  if (value >= 1000) {
+    return `${(value / 1000).toFixed(1)}K`;
+  }
+  return value.toFixed(0);
+};
+
+export const formatDateRange = (start: Date, end: Date): string => {
+  const sameYear = start.getFullYear() === end.getFullYear();
+  const sameMonth = sameYear && start.getMonth() === end.getMonth();
+
+  if (sameMonth) {
+    return `${start.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${end.getDate()}, ${end.getFullYear()}`;
+  }
+  if (sameYear) {
+    return `${start.toLocaleDateString("en-US", { month: "short", day: "numeric" })} - ${end.toLocaleDateString("en-US", { month: "short", day: "numeric" })}, ${end.getFullYear()}`;
+  }
+  return `${start.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })} - ${end.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
 };

@@ -19,7 +19,7 @@ const categorySlice = createSlice({
     },
     updateCategory: (state, action: PayloadAction<Category>) => {
       const index = state.categories.findIndex(
-        (c) => c.id === action.payload.id
+        (c) => c.id === action.payload.id,
       );
       if (index !== -1) {
         state.categories[index] = action.payload;
@@ -27,13 +27,16 @@ const categorySlice = createSlice({
     },
     deleteCategory: (state, action: PayloadAction<string>) => {
       state.categories = state.categories.filter(
-        (c) => c.id !== action.payload
+        (c) => c.id !== action.payload,
       );
+    },
+    setCategories: (state, action: PayloadAction<Category[]>) => {
+      state.categories = action.payload;
     },
   },
 });
 
-export const { addCategory, updateCategory, deleteCategory } =
+export const { addCategory, updateCategory, deleteCategory, setCategories } =
   categorySlice.actions;
 
 export default categorySlice.reducer;
